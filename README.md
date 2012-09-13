@@ -11,7 +11,7 @@ should now be installed.
 
 ## Configuration
 
-Right click on the icon (which is now in your tooblar) and select "Options",
+Right click on the icon (which is now in your toolbar) and select "Options",
 or go to options through the extensions screen. Input your App Id and Access
 Token. You may input an App Name, though it's not used anywhere yet.
 
