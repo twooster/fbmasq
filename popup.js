@@ -68,9 +68,7 @@ window.Masquerade = (function($, undefined) {
                     uid: info.uid,
                     img: info.pic_small,
                     name: info.name,
-                    click: $.proxy(function() {
-                        this.loginAsUser(info.uid);
-                    }, this)
+                    click: $.proxy(this.loginAsUser, this)
                 });
                 $ul.append(userLinkView.el);
                 userLinkView.render();
@@ -116,7 +114,7 @@ window.Masquerade = (function($, undefined) {
             $.extend(this, options);
             this.$el = $(this.el);
             this.$el.on('click', 'a.name', $.proxy(function() {
-                this.click();
+                this.click(this.uid);
             }, this));
         }
     });
