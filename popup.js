@@ -7,60 +7,43 @@ window.Masquerade = (function($, undefined) {
         this.init(options);
     };
 
-
     $.extend(Masquerade.App.prototype, {
         appId: null,
         accessToken: null,
         testUsers: {},
 
-        loadSettings : function() {
-            this.appId = localStorage.appId;
-            this.accessToken = localStorage.accessToken;
-        },
-
-        updateCache : function(force, callback) {
-            var i, toRetrieve = [];
-            for (var id in this.testUsers) {
-                var testUser = this.testUsers[id];
-                if (force || testUser.name == undefined) {
-                    toRetrieve.push(id);
-                }
-            }
-            if (toRetrieve) {
-                this.retrieveUserInfo(toRetrieve, $.proxy(function(data) {
-                    var users = data.data;
-                    for (var i = 0; i < users.length; i++) {
-                        $.extend(this.testUsers[users[i].uid], users[i]);
-                    }
-                    callback();
-                }, this));
-            } else {
-                if (callback)
-                    callback();
-            }
-        },
-
-        retrieveTestUsers : function(callback) {
+        fetchTestUsers : function(callback) {
             $.ajax({
                 url: 'https://graph.facebook.com/' + this.appId + '/accounts/test-users?access_token=' + this.accessToken,
                 success: $.proxy(function(data, status, xhr) {
                     var testUsers = data.data;
+                    var uids = [];
                     this.testUsers = {};
                     for (var i = 0; i < testUsers.length; ++i) {
                         this.testUsers[testUsers[i].id] = testUsers[i];
+                        uids.push(testUsers[i].id);
                     }
-                    this.updateCache(false, callback);
+                    this.fetchUserInfo(uids, callback);
                 }, this),
                 dataType: 'json',
             });
         },
 
-        retrieveUserInfo : function(uids, callback) {
+        fetchUserInfo : function(uids, callback) {
             var fql = 'SELECT uid, name, pic_small FROM user WHERE uid IN ('
                     + uids.join(', ') + ')';
             $.ajax({
-                url: 'https://graph.facebook.com/fql?q=' + encodeURIComponent(fql) + '&access_token=' + this.accessToken,
-                success: callback,
+                url: 'https://graph.facebook.com/fql?q=' +
+                     encodeURIComponent(fql) +
+                     '&access_token=' + this.accessToken,
+                success: $.proxy(function(data) {
+                    var users = data.data;
+                    for (var i = 0; i < users.length; i++) {
+                        $.extend(this.testUsers[users[i].uid], users[i]);
+                    }
+                    if (callback)
+                        callback();
+                }, this),
                 dataType: 'json',
             });
         },
@@ -85,16 +68,17 @@ window.Masquerade = (function($, undefined) {
                     uid: info.uid,
                     img: info.pic_small,
                     name: info.name,
-                    callback: $.proxy(this.loginAsUser, this)
+                    click: $.proxy(function() {
+                        this.loginAsUser(info.uid);
+                    }, this)
                 });
-                console.log(userLinkView.el);
                 $ul.append(userLinkView.el);
                 userLinkView.render();
             }
         },
 
         loadAndRender : function() {
-            this.retrieveTestUsers($.proxy(this.render, this));
+            this.fetchTestUsers($.proxy(this.render, this));
         },
 
         init : function(options) {
@@ -118,33 +102,32 @@ window.Masquerade = (function($, undefined) {
         el: null,
         uid: null,
         img: null,
-        callback: noop,
+        click: noop,
 
         render : function() {
             var img = '';
             if (this.img)
                 img = '<img src="' + this.img + '" class="image"/>';
             var $a = $(img + '<a href="#" class="name">' + this.name + '</a>');
-            this.$el.empty().append($a);
-            $a.on('click', $.proxy(function() {
-                    this.callback(this.uid)
-                }, this)
-            );
+            this.$el.html($a);
         },
 
         init : function(options) {
             $.extend(this, options);
             this.$el = $(this.el);
+            this.$el.on('click', 'a.name', $.proxy(function() {
+                this.click();
+            }, this));
         }
     });
-    
+
     return Masquerade;
 })($);
 
 $(function() {
     //return;
     window.app = new Masquerade.App({
-        appId: localStorage.appId, 
+        appId: localStorage.appId,
         accessToken: localStorage.accessToken
     });
 });
