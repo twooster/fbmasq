@@ -1,0 +1,53 @@
+.clearfix:after {
+        content: ".";
+        display: block;
+        clear: both;
+        visibility: hidden;
+        line-height: 0;
+        height: 0;
+}
+ 
+.clearfix {
+        display: inline-block;
+}
+ 
+html[xmlns] .clearfix {
+        display: block;
+}
+ 
+* html .clearfix {
+        height: 1%;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a {
+    text-decoration: none;
+    color: #3B5998;
+}
+
+.user .image {
+    width: 24px;
+    height: 24px;
+    float: left;
+}
+
+.user .name {
+    padding-left: 6px;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.user:first-child {
+    border-top: none;
+}
+
+.user {
+    display: block;
+    padding: 4px;
+    width: 200px;
+    border-top: 1px solid #ccc;
+}
