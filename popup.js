@@ -66,7 +66,7 @@ window.Masquerade = (function($, undefined) {
         },
 
         loginAsUser : function(uid) {
-            var loginUrl = this.testUsersById[uid].login_url;
+            var loginUrl = this.testUsers[uid].login_url;
             chrome.tabs.create({
                 url: loginUrl,
                 active: false,
