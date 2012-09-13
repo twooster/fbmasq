@@ -28,6 +28,27 @@ a {
     color: #3B5998;
 }
 
+#content {
+    width: 200px;
+}
+
+.loading {
+    margin: 4px;
+    padding: 6px;
+    background: #ddd;
+    border: 1px solid #ccc;
+}
+
+.loading .text {
+    margin-left: 10px;
+    vertical-align: bottom;
+    line-height: 30px;
+    color: #333;
+}
+
+.loading .spinner {
+}
+
 .user .image {
     width: 24px;
     height: 24px;

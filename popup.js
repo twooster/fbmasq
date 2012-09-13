@@ -94,7 +94,6 @@ window.Masquerade = (function($, undefined) {
         },
 
         loadAndRender : function() {
-            this.$el.html('Loading...');
             this.retrieveTestUsers($.proxy(this.render, this));
         },
 
@@ -143,6 +142,7 @@ window.Masquerade = (function($, undefined) {
 })($);
 
 $(function() {
+    //return;
     window.app = new Masquerade.App({
         appId: localStorage.appId, 
         accessToken: localStorage.accessToken
