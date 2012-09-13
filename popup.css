@@ -6,15 +6,15 @@
         line-height: 0;
         height: 0;
 }
- 
+
 .clearfix {
         display: inline-block;
 }
- 
+
 html[xmlns] .clearfix {
         display: block;
 }
- 
+
 * html .clearfix {
         height: 1%;
 }
@@ -46,16 +46,14 @@ a {
     color: #333;
 }
 
-.loading .spinner {
-}
-
 .user .image {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     float: left;
 }
 
 .user .name {
+    font-size: 14px;
     padding-left: 6px;
     display: block;
     text-overflow: ellipsis;
