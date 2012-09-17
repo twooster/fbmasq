@@ -1,6 +1,6 @@
 # Facebook Masquerade
 
-Facebook Masquerade is a Chrome extension that allows you to rapidly switch 
+Facebook Masquerade is a Chrome extension that allows you to rapidly switch
 between Facebook test users set up for a given Facebook Application.
 
 ## Installation
@@ -23,4 +23,4 @@ short delay; click on any name to switch to that user.
 
 ## Caveats, Bugs, Etc
 
-There is no error handling yet.
+There is only limited error handling.

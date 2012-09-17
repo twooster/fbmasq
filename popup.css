@@ -46,6 +46,26 @@ a {
     color: #333;
 }
 
+.error {
+    margin: 4px;
+    padding: 6px;
+    background: #800;
+    color: #fff;
+    border: 1px solid #400;
+}
+
+.error h1 {
+    font-weight: bold;
+}
+
+.error a {
+    color: #fff;
+    font-weight: bold;
+}
+p {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
 .user .image {
     width: 26px;
     height: 26px;

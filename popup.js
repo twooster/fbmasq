@@ -12,7 +12,7 @@ window.Masquerade = (function($, undefined) {
         accessToken: null,
         testUsers: {},
 
-        fetchTestUsers : function(callback) {
+        fetchTestUsers : function(success, error) {
             $.ajax({
                 url: 'https://graph.facebook.com/' + this.appId + '/accounts/test-users?access_token=' + this.accessToken,
                 success: $.proxy(function(data, status, xhr) {
@@ -23,13 +23,14 @@ window.Masquerade = (function($, undefined) {
                         this.testUsers[testUsers[i].id] = testUsers[i];
                         uids.push(testUsers[i].id);
                     }
-                    this.fetchUserInfo(uids, callback);
+                    this.fetchUserInfo(uids, success, error);
                 }, this),
+                error: error,
                 dataType: 'json',
             });
         },
 
-        fetchUserInfo : function(uids, callback) {
+        fetchUserInfo : function(uids, success, error) {
             var fql = 'SELECT uid, name, pic_small FROM user WHERE uid IN ('
                     + uids.join(', ') + ')';
             $.ajax({
@@ -41,9 +42,10 @@ window.Masquerade = (function($, undefined) {
                     for (var i = 0; i < users.length; i++) {
                         $.extend(this.testUsers[users[i].uid], users[i]);
                     }
-                    if (callback)
-                        callback();
+                    if (success)
+                        success();
                 }, this),
+                error: error,
                 dataType: 'json',
             });
         },
@@ -76,7 +78,23 @@ window.Masquerade = (function($, undefined) {
         },
 
         loadAndRender : function() {
-            this.fetchTestUsers($.proxy(this.render, this));
+            this.fetchTestUsers($.proxy(this.render, this), $.proxy(this.errorCallback, this));
+        },
+
+        errorCallback : function(xhr, errorType, error) {
+            var msg = xhr.status + ' -- ' + xhr.statusText + ': ';
+            if (errorType == 'error') {
+                try {
+                    var err = JSON.parse(xhr.response).error;
+                    msg += err.type + '(' + err.code + '): ' + err.message;
+                } catch (err) {
+                    msg += xhr.response;
+                }
+            } else {
+                data += xhr.response;
+            }
+            this.$el.html('<div class="error"><h1>Error!</h1><p class="message"/><p>You may want to go to the <a href="options.html">options</a>.</p></div>');
+            $('.message', this.$el).text(msg);
         },
 
         init : function(options) {
@@ -123,7 +141,6 @@ window.Masquerade = (function($, undefined) {
 })($);
 
 $(function() {
-    //return;
     window.app = new Masquerade.App({
         appId: localStorage.appId,
         accessToken: localStorage.accessToken
