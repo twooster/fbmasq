@@ -5,12 +5,16 @@
         <script src="options.js"></script>
     </head>
     <body>
-        App Name: <input type="text" id="app_name"/><br/>
-        App ID: <input type="text" id="app_id"/><br/>
-        App Access Token: <input type="text" id="app_access_token"/><br/>
-        <br/>
-        If you don't have these values, you may want to go <a href="https://developers.facebook.com/tools/access_token/">here</a>.
-        <br/>
-        <button id="save">Save</button>
+        <p>
+            App ID: <input type="text" id="app_id"/><br/>
+            App Access Token: <input type="text" id="app_access_token" style="width:300px;"/>
+        </p>
+        <p>If you don't have these values, you may want to go <a href="https://developers.facebook.com/tools/access_token/">here</a>.</p>
+        <p>
+            <button id="save">Save</button><br/>
+        </p>
+        <p>
+        <span id="status"></span>
+        </p>
     </body>
 </html>
