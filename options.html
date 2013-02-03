@@ -1,20 +1,24 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>Facebook Masquerade Options</title>
-        <script src="zepto.min.js"></script>
-        <script src="options.js"></script>
-    </head>
-    <body>
-        <p>
-            App ID: <input type="text" id="app_id"/><br/>
-            App Access Token: <input type="text" id="app_access_token" style="width:300px;"/>
-        </p>
-        <p>If you don't have these values, you may want to go <a href="https://developers.facebook.com/tools/access_token/">here</a>.</p>
-        <p>
-            <button id="save">Save</button><br/>
-        </p>
-        <p>
-        <span id="status"></span>
-        </p>
-    </body>
+  <head>
+    <title>Facebook Masquerade Options</title>
+    <script src="zepto.min.js"></script>
+    <script src="options.js"></script>
+  </head>
+  <body>
+    <p>
+      <label for="app_access_token">App Token:</label>
+      <input type="text" id="app_access_token" name="app_access_token"
+             style="width:300px;" placeholder="Paste access token here"/>
+    </p>
+    <p>
+      If you don't an application token, you may want to go
+      <a href="https://developers.facebook.com/tools/access_token/"
+        target="_blank">here</a>.
+    </p>
+    <p>
+      <button id="save">Save</button>
+    </p>
+    <p id="status"></p>
+  </body>
 </html>

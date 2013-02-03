@@ -1,25 +1,51 @@
-function saveOptions() {
+(function($) {
+  function extractOptions() {
     var token = $('#app_access_token').val();
-    var id = $('#app_id').val();
-    if (token.length && id.length && token.indexOf('|') == -1) {
-        token = id.toString() + '|' + token.toString();
+    if (!token) {
+      setError('Empty app token');
+      return;
     }
-    localStorage.accessToken = token;
-    localStorage.appId = id;
-}
 
-function restoreOptions() {
+    var idEnd = token.indexOf('|');
+    if (idEnd === -1) {
+      setError('Could not extract application id');
+      return;
+    }
+
+    var id = token.slice(0, idEnd);
+    return {
+      accessToken: token,
+      appId: id
+    };
+  }
+
+  function restoreOptions() {
     $('#app_access_token').val(localStorage.accessToken);
-    $('#app_id').val(localStorage.appId);
-}
+  }
 
-function initPage() {
-    $('#save').on('click', function() {
-        saveOptions();
-        restoreOptions();
-        $('#status').text('Saved at ' + (new Date()).toTimeString());
-    });
+  function setError(text) {
+    setStatus('Error: ' + text, 'error');
+  }
+
+  function setStatus(text, cls) {
+    $('#status')
+      .removeClass()
+      .addClass(cls || '')
+      .text(text);
+  }
+
+  function saveClicked() {
+    var opts = extractOptions();
+    if (opts) {
+      for (var k in opts) {
+        localStorage[k] = opts[k];
+      }
+      setStatus('Saved at ' + (new Date()).toTimeString());
+    }
+  }
+
+  $(function() {
+    $('#save').on('click', saveClicked);
     restoreOptions();
-}
-
-$(initPage);
+  })
+})(Zepto);
