@@ -1,6 +1,6 @@
-window.Masquerade = (function($, undefined) {
-  var Masquerade = {};
+Masquerade = Masquerade || {};
 
+(function(Masquerade, $, undefined) {
   function noop() {}
 
   Masquerade.App = function(options) {
@@ -136,9 +136,7 @@ window.Masquerade = (function($, undefined) {
       }, this));
     }
   });
-
-  return Masquerade;
-})($);
+})(Masquerade, $);
 
 $(function() {
   window.app = new Masquerade.App({
