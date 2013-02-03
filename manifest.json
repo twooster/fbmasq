@@ -2,11 +2,19 @@
     "name": "Facebook Test User Masquerade",
     "version" : "0.1",
     "manifest_version" : 2,
+
     "description" : "Allows the user to masquerade as test users of a given Facebook Application",
+    "icons" : {
+      "16" : "fbmasq-16.png",
+      "48" : "fbmasq-48.png",
+      "128" : "fbmasq-128.png"
+    },
+
     "browser_action" : {
         "default_popup" : "popup.html",
-        "default_icon" : "icon.png"
+        "default_icon" : "fbmasq-48.png"
     },
+
     "options_page" : "options.html",
     "permissions" : [
         "https://graph.facebook.com/",
