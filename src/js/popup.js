@@ -1,13 +1,101 @@
+
+Util = {};
+
+$.extend(Util, {
+  noop : function() {},
+  inherit : function(superClass, merge, constr) {
+    var protoClass = function() {};
+    protoClass.prototype = superClass.prototype;
+
+    var prototype = new protoClass;
+
+    var klass = constr || function() { superClass.apply(this, arguments); };
+    klass.prototype = prototype;
+    klass.prototype.constructor = klass;
+    klass.superClass = superClass;
+    klass.subclass = function(merge, constr) {
+      return inherit(klass, merge, constr);
+    }
+
+    for (var k in (merge || {})) {
+      if (typeof merge[k] === 'function' && typeof prototype[k] === 'function') {
+        prototype[k] = (function(orig, override) {
+          return function() {
+            this.super = orig;
+            override.apply(this, arguments);
+            delete this.super;
+          }
+        })(prototype[k], merge[k]);
+      } else {
+        prototype[k] = merge[k];
+      }
+    }
+
+    return klass;
+  }
+});
+
+
 Masquerade = Masquerade || {};
 
 (function(Masquerade, $, undefined) {
   function noop() {}
 
-  Masquerade.App = function(options) {
-    this.init(options);
-  };
+  function inherit(superClass, merge, constr) {
+    var protoClass = function() {};
+    protoClass.prototype = superClass.prototype;
 
-  $.extend(Masquerade.App.prototype, {
+    var prototype = new protoClass;
+
+    var klass = constr || function() { superClass.apply(this, arguments); };
+    klass.prototype = prototype;
+    klass.prototype.constructor = klass;
+    klass.superClass = superClass;
+    klass.subclass = function(merge, constr) {
+      return inherit(klass, merge, constr);
+    }
+
+    for (var k in (merge || {})) {
+      if (typeof merge[k] === 'function' && typeof prototype[k] === 'function') {
+        prototype[k] = (function(orig, override) {
+          return function() {
+            this.super = orig;
+            override.apply(this, arguments);
+            delete this.super;
+          }
+        })(prototype[k], merge[k]);
+      } else {
+        prototype[k] = merge[k];
+      }
+    }
+
+    return klass;
+  }
+
+  var Base = inherit(Object, {
+    extendOptions : function(opts) {
+      for (var k in opts) {
+        if (k in this) {
+          this[k] = opts[k];
+        }
+      }
+    },
+
+    init : function(options) {
+      this.extendOptions(options);
+    },
+  }, function() { this.init.apply(this, arguments); });
+
+  var View = Base.subclass({
+    init : function(el, options) {
+      this.super.apply(this, options);
+
+      this.el = el;
+      this.$el = $(el);
+    }
+  });
+
+  Masquerade.App = classy({
     appId: null,
     accessToken: null,
     testUsers: {},
@@ -109,38 +197,61 @@ Masquerade = Masquerade || {};
     },
   });
 
-  Masquerade.UserLinkView = function(options) {
-    this.init(options);
-  };
+  Masquerade.UserListView = View.subclass({
+    users : null,
+    onClick : noop,
 
-  $.extend(Masquerade.UserLinkView.prototype, {
-    name: '',
-    el: null,
-    uid: null,
-    img: null,
-    click: noop,
+    init : function() {
+      this.$el = $(this.el);
+    },
+
+    render : function() {
+      var $ul = $('<ul class="users"></ul>');
+
+      this.$el.empty().append($ul);
+
+      if (this.users) {
+        for (var i = 0, user; user = this.users[i]; ++i) {
+          var userLinkView = new Masquerade.UserLinkView({
+            el      : $('<li class="clearfix user"></li>'),
+            uid     : user.uid,
+            img     : user.pic_small,
+            name    : user.name,
+            onClick : this.onClick,
+          });
+          $ul.append(userLinkView.el);
+          userLinkView.render();
+        }
+      }
+    }
+  });
+
+  Masquerade.UserLinkView = View.subclass({
+    name    : '',
+    user    : null,
+    onClick : noop,
+
+    init : function(options) {
+      this.$el = $(this.el);
+      this.$el.on('click', 'a.name', $.proxy(function() {
+        this.onClick(this.user);
+      }, this));
+    }
 
     render : function() {
       var img = '';
       if (this.img)
-        img = '<img src="' + this.img + '" class="image"/>';
-      var $a = $(img + '<a href="#" class="name">' + this.name + '</a>');
+        img = '<img src="' + this.user.img + '" class="image"/>';
+      var $a = $(img + '<a href="#" class="name">' + this.user.name + '</a>');
       this.$el.html($a);
-    },
-
-    init : function(options) {
-      $.extend(this, options);
-      this.$el = $(this.el);
-      this.$el.on('click', 'a.name', $.proxy(function() {
-        this.click(this.uid);
-      }, this));
     }
   });
+
 })(Masquerade, $);
 
 $(function() {
   window.app = new Masquerade.App({
-    appId: localStorage.appId,
-    accessToken: localStorage.accessToken
+    appId       : localStorage.appId,
+    accessToken : localStorage.accessToken
   });
 });

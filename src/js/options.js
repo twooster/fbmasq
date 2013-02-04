@@ -1,3 +1,29 @@
+Masquerade = Masquerade || {};
+
+Masquerade.Config = function(options) {
+  this.init(options);
+}
+
+$.extend(Masquerade.Config.prototype, {
+  init : function(options) {
+    options = options || {};
+
+    this.storage = options.storage || localStorage;
+  },
+
+  getApplications : function() {
+    return this.storage.applications || [];
+  }
+
+  setApplications : function(applications) {
+    this.storage.applications = applications;
+  },
+
+});
+
+Masquerade.OptionsPage = function(options) {
+};
+
 (function($) {
   function extractOptions() {
     var token = $('#app_access_token').val();
